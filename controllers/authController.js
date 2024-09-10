@@ -88,19 +88,21 @@ export const login = async (req, res) => {
             maxAge: 7*24*60*60*1000,
         });
 
-        res.status(201).json({
+        user.lastLogin = Date.now();
+        await user.save();
+
+        res.status(200).json({
             success: true,
-            message: "User created successfully!!",
+            message: "User LoggedIn successfully!!",
             user:{
                 ...user._doc,
                 password: undefined,
             },
         });
 
-
-
     } catch(error){
-
+        console.log("Error in login ", error);
+        res.status(400).json({success:false, message:error.message});   
     }
 
 }
