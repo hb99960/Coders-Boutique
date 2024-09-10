@@ -1,13 +1,10 @@
 import { User } from '../models/user.model.js';
 import bcryptjs from 'bcryptjs';
-import { generateVerificationCode } from '../utils/generateVerificationCode.js';
 import jwt from "jsonwebtoken";
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
-import { getMaxListeners } from 'events';
 
 export const signup = async (req, res) => {
-    console.log(req.body);
     const { email, password, name } = req.body;
 
     try {
@@ -31,13 +28,12 @@ export const signup = async (req, res) => {
         })
 
         await user.save();
-        console.log("User is saved")
+
         // generate Token and set Cookie
         const jwtToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
             expiresIn: "7d",
         });
 
-        console.log("jwtToken = ", jwtToken);
         res.cookie("token", jwtToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
@@ -58,14 +54,9 @@ export const signup = async (req, res) => {
     } catch (error) {
         res.status(400).json({ success: false, message: error.message });
     };
-
-
-
-    // res.send("Signup route");
 }
 
 export const login = async (req, res) => {
-    console.log("login route");
 
     const { email, password } = req.body;
     try {
@@ -83,7 +74,6 @@ export const login = async (req, res) => {
             expiresIn: "7d",
         });
 
-        console.log("jwtToken = ", jwtToken);
         res.cookie("token", jwtToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
@@ -104,7 +94,7 @@ export const login = async (req, res) => {
         });
 
     } catch (error) {
-        console.log("Error in login ", error);
+        console.error("Unable to login ", error);
         res.status(400).json({ success: false, message: error.message });
     }
 
@@ -120,7 +110,6 @@ export const logout = async (req, res) => {
 
 export const forgotPassword = async (req, res) => {
     const { email } = req.body;
-    console.log("email = ", email);
 
     try {
         const user = await User.findOne({ email });
@@ -132,7 +121,6 @@ export const forgotPassword = async (req, res) => {
         const resetToken = crypto.randomBytes(20).toString("hex");
         const resetTokenExpiresAt = Date.now() + 1 * 60 * 60 * 1000;
 
-        console.log("resetToken = ", resetToken)
         user.resetPasswordToken = resetToken;
         user.resetPasswordExpiresAt = resetTokenExpiresAt;
 
@@ -144,9 +132,9 @@ export const forgotPassword = async (req, res) => {
         // send email
         const transporter = nodemailer.createTransport({
             service: 'gmail',
-            host:'smtp.gmail.com',
-            port:587,
-            secure:false,
+            host: 'smtp.gmail.com',
+            port: 587,
+            secure: false,
             auth: {
                 user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASS,
@@ -238,15 +226,13 @@ export const forgotPassword = async (req, res) => {
         res.status(200).json({ success: true, message: 'Password reset email sent' });
 
     } catch (error) {
-        console.error('Error : ', error);
+        console.error('Unable to forgot password ', error);
         res.status(500).json({ success: false, message: 'Server error' });
     }
 }
 
 export const resetForm = (req, res) => {
-    // res.send("resetForm route");
     const { token } = req.params;
-    console.log("token ", token);
     res.send(`
         <!DOCTYPE html>
         <html lang="en">
@@ -267,16 +253,11 @@ export const resetForm = (req, res) => {
     `);
 }
 
-
-
 export const resetPassword = async (req, res) => {
     const { token } = req.params;
     const { newPassword } = req.body;
 
     try {
-        console.log("token ", token);
-        console.log("new Password ", newPassword);
-        console.log("Request Body ", req.body);
         const user = await User.findOne({
             resetPasswordToken: token,
             resetPasswordExpiresAt: { $gt: Date.now() } // Token must be valid

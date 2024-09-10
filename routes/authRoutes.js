@@ -11,10 +11,10 @@ router.post("/logout", logout )
 
 router.post("/forgot-password", forgotPassword )
 
-// for redirection
+// for user redirection (password reset)
 router.get("/reset-password/:token", resetForm);
 
-// actual password change
+// submit new password
 router.post("/reset/:token", resetPassword);
 
 export default router;
