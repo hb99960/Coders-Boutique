@@ -20,6 +20,7 @@ app.get("/", (req, res) => {
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/auth", authRoutes)
 
