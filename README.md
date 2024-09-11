@@ -1,5 +1,9 @@
 # Authentication API Project
 
+<img src="https://github.com/user-attachments/assets/ea3b364d-5dba-489e-81b5-5142efd60212" alt="Screenshot" width="400" style="border-radius: 15px;" />
+
+<img src="https://github.com/user-attachments/assets/887b67f3-03f7-4f53-adaa-ee70cbd01e45" alt="Screenshot" width="400" style="border-radius: 15px;" />
+
 ## Objective :
 The goal of this project is to build a complete set of authentication APIs that include functionalities for user login, signup, password recovery, and token management.
 
@@ -54,6 +58,31 @@ EMAIL_PASS=your_email_password
 ```npm run dev```
 
 
-5. The API will be available at http://localhost:3000.
+5. The API will be available at http://localhost:3000/api/auth
 
 
+## API Endpoints
+
+1. Signup
+
+   POST `http://localhost:3000/api/auth/signup`
+   
+2. Logout
+
+    POST `http://localhost:3000/api/auth/logout`
+   
+3. Login
+
+   POST `http://localhost:3000/api/auth/login`
+   
+4. Forget Password
+
+      POST `http://localhost:3000/api/auth/forgot-password`
+   
+5. Reset Password
+
+     POST `http://localhost:3000/api/auth/reset/:token`
+   
+6. Reset Form
+
+     GET `http://localhost:3000/api/auth/reset-password/:token`
